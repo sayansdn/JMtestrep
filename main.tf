@@ -1,11 +1,11 @@
 
 terraform {
   backend "azurerm" {
-    storage_account_name = "#(|Terraform_BackEnd_Storage_Account|)#"
-    container_name       = "#(|Terraform_BackEnd_Storage_Container|)#"
-    key                  = "varvmName"
+    storage_account_name = "teststg"
+    container_name       = "testcnt"
+    #key                  = "varvmName"
     #access_key            = var.access_key
-    access_key = "q3kRLfKlcbOF6Y+bMCzkEHR1BNK2cbDrFdLsb73H06ceUqdcutdBG1l4Tkh6z39e61ess3+a+7wK+AStAUJilw=="
+    #access_key = "q3kRLfKlcbOF6Y+bMCzkEHR1BNK2cbDrFdLsb73H06ceUqdcutdBG1l4Tkh6z39e61ess3+a+7wK+AStAUJilw=="
 
   }
   required_providers {
@@ -20,7 +20,7 @@ terraform {
 provider "azurerm" {
   features {}
   environment     = "public"
-  subscription_id = "var.SubscriptionId"
+  subscription_id = "79170484-10cc-48f5-99a2-f4bfe2ad50e1"
   # client_id       = var.spnID
   # client_secret   = var.spnPass
   # tenant_id       = var.tenantID
@@ -37,11 +37,6 @@ provider "azurerm" {
 #Create a resource group
 
 resource "azurerm_resource_group" "rgname" {
-  name     = "var.VMRGName"
-  location = "var.location"
-
-  tags = {
-    CreatedBy  = "var.CreatedBy"
-    ManagedBy  = "var.ManagedBy"
-  }
+  name     = "testRG"
+  location = "West us"
 }
