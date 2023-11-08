@@ -1,0 +1,463 @@
+name: Pipeline-To-Deploy-VM-windows-With-ILB-Terraform.yml
+
+parameters:
+       
+  - name: Resource_Group_Name
+    displayName: Specify the Resource Group Name of the Backend Storage Account which stores tf state file
+    type: string
+    default: testrg0002
+
+  - name: Terraform_BackEnd_Storage_Account
+    displayName: Specify the Name of the Backend Storage Account which stores tf state file
+    type: string
+    default: testsadiagboot001
+
+  - name: Terraform_BackEnd_Storage_Container
+    displayName: Specify the Resource Group Name of the Backend Storage Container which stores tf state file
+    type: string
+    default: terraformstatefilesvm
+     
+  - name: ServiceConnectionName
+    displayName: Specify the Service Connection Name
+    type: string
+    default: BC-TCS-POC-SVC
+
+  - name: SubscriptionID
+    displayName: Specify the target Subscription ID to deploy VM
+    type: string
+    default: 1af26366-3c39-4022-8c45-be69803c1373
+
+  - name: GalsubID
+    displayName: Specify the Subscription ID of Azure Compute Gallery
+    type: string
+    default: 1af26366-3c39-4022-8c45-be69803c1373
+
+  - name: VMRGName
+    displayName: Specify the VM RG Name
+    type: string
+    default: testrg0002
+
+  - name: ILBName
+    displayName: Specify the ILB Name
+    type: string
+    default: testilb0005
+
+  - name: VmName
+    displayName: Specify the VM Name
+    type: string
+    default: testvm0006
+
+  - name: Location
+    displayName: Choose the Location
+    type: string
+    values:
+     - NorthEurope
+     - WestEurope
+     - UKsouth
+     - EastUS
+    default: WestEurope
+
+  - name: VMSize
+    displayName: Specify the VM Size
+    type: string
+    default: Standard_B2ms
+
+  - name: NSGName
+    displayName: Speciify the NSGName
+    type: string
+    
+
+  - name: NSGRGName
+    displayName: Speciify the NSG RG Name
+    type: string
+    
+  
+     
+  - name: VnetName
+    displayName: Specify the VnetName
+    type: string
+    default: az02_vn_spoke_polo_qa
+
+  - name: VnetRGName
+    displayName: Specify the Vnet RG Name
+    type: string
+    default: az02_rg_polo_qa_db
+
+  - name: SubnetName
+    displayName: Specify the Subnet Name
+    type: string
+    default: az02_sub_appl_polo_qa
+
+  - name: LAWorksSpaceName
+    displayName: Specify the LA WorksSpace Name for monitoring
+    type: string
+    default: testlaw0002
+
+  - name: LAWorksSpaceRGName
+    displayName: Specify the RG of the LA WorksSpace Name for monitoring
+    type: string
+    default: testrg0002
+
+  - name: LawSubID
+    displayName: Specify the Subscription of the LA WorksSpace Name for monitoring
+    type: string
+    default: 1af26366-3c39-4022-8c45-be69803c1373
+
+  - name: SAName
+    displayName: Specify the Storage Account Name for boot diagnostics
+    type: string
+    default: testsadiagboot001
+
+  - name: SARGName
+    displayName: Specify the RG of the Storage Account Name for boot diagnostics
+    type: string
+    default: testrg0002 
+
+  - name: GalleryName
+    displayName: Choose the Gallery Name
+    type: string
+    values:
+     - az_weu_apppr_gim_prd_gal01
+     - testgallery001
+    default: az_weu_apppr_gim_prd_gal01
+
+  - name: GalleryResourceGroupName
+    displayName: Choose the Gallery ResourceGroup Name
+    type: string
+    values:
+     - az-weu-nonsap-gim-prd-sha-rg01
+     - testrg0002
+    default: az-weu-nonsap-gim-prd-sha-rg01
+
+  - name: GalleryImageDefinitionName
+    displayName: Choose the Gallery ImageDefinition Name
+    type: string
+    values:
+     - imgd-weu-apppr-gim-win-2019-vm01
+     - imgd-weu-apppr-gim-win-2022-vm01
+    default: imgd-weu-apppr-gim-win-2022-vm01
+
+  - name: KeyvaultName
+    displayName: Specify the Keyvault Name
+    type: string
+    default: az02-kv-app-poc
+
+  - name: PublisherName
+    displayName: Specify the Publisher Name of the Image
+    type: string
+    values:
+     - center-for-internet-security-inc
+     - MicrosoftWindowsServer
+    default: center-for-internet-security-inc
+
+  - name: OfferName
+    displayName: Specify the Offer Name of the Image
+    type: string
+    values:
+     - cis-windows-server-2019-v1-0-0-l1
+     - cis-windows-server-2022-l1
+     - WindowsServer
+    default: cis-windows-server-2022-l1
+ 
+  - name: PlanName
+    displayName: Specify the Plan Name of the Image
+    type: string
+    values:
+     - cis-ws2019-l1
+     - cis-windows-server-2022-l1-gen2
+     - 2022-Datacenter
+    default: cis-windows-server-2022-l1-gen2
+
+  - name: DiskSku
+    displayName: OS Disk Sku
+    type: string
+    values:
+      - Premium_LRS
+      - Premium_ZRS
+      - Standard_LRS
+      - StandardSSD_LRS
+      - StandardSSD_ZRS
+    default: Premium_LRS
+
+  - name: RSVName
+    displayName: Specify the target RSV name
+    type: string
+    default: az02-rv-infra-poc-01
+
+  - name: RSVRGName
+    displayName: Specify the target RSV RG name
+    type: string
+    default: az02_rg_infra_poc
+
+  - name: BackupPolicyName
+    displayName: Specify the target BackupPolicyName
+    type: string
+    default: DefaultPolicy
+
+  - name: AdditionalDiskRequired
+    displayName: Additional Disk Required?
+    type: string
+    values:
+     - true
+     - false
+    default: true  
+
+  - name: CountOfDataDisk
+    displayName: CountOfDataDisk
+    type: string
+    values:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+    default: 0
+
+  - name: DiskSizeGB
+    displayName: Specify the Data Disk Size in GB
+    type: string
+    default: null
+   
+  - name: DataDiskSku
+    displayName: DataDiskSku
+    type: string
+    values:
+      - Premium_LRS
+      - Premium_ZRS
+      - Standard_LRS
+      - StandardSSD_LRS
+      - StandardSSD_ZRS
+      - null
+    default: Premium_ZRS
+  
+  - name: CreatedBy
+    displayName: Specify the team who created the resource for tagging purpose
+    type: string
+    values:
+      - TCS_Migration_Team
+      - BC
+    default: TCS_Migration_Team
+ 
+  - name: ManagedBy
+    displayName: Specify the team who will manage the resource for tagging purpose
+    type: string
+    values:
+      - TCS_Run_Services
+    default: TCS_Run_Services
+
+
+ 
+variables:
+  - name: Resource_Group_Name
+    value: ${{ parameters.Resource_Group_Name }}
+
+  - name: Terraform_BackEnd_Storage_Account
+    value: ${{ parameters.Terraform_BackEnd_Storage_Account }}
+
+  - name: Terraform_BackEnd_Storage_Container
+    value: ${{ parameters.Terraform_BackEnd_Storage_Container }}
+
+  - name: Terraform_BackEnd_Storage_State_Key
+    value: ${{ parameters.VmName }}
+
+  - name: SubscriptionId
+    value: ${{ parameters.SubscriptionId }}
+
+  - name: GalsubID
+    value: ${{ parameters.GalsubID }}
+
+  - name: VMRGName
+    value: ${{ parameters.VMRGName }}
+
+  - name: VmName
+    value: ${{ parameters.VmName }}
+
+  - name: Location
+    value: ${{ parameters.Location }}
+
+  - name: VMSize
+    value: ${{ parameters.VMSize }}
+
+  - name: NSGName
+    value: ${{ parameters.NSGName }}
+
+  - name: VnetName
+    value: ${{ parameters.VnetName }}
+
+  - name: VnetRGName
+    value: ${{ parameters.VnetRGName }}    
+
+  - name: SubnetName
+    value: ${{ parameters.SubnetName }}
+
+  - name: GalleryName
+    value: ${{ parameters.GalleryName }}
+
+  - name: GalleryResourceGroupName
+    value: ${{ parameters.GalleryResourceGroupName }}
+
+  - name: GalleryImageDefinitionName
+    value: ${{ parameters.GalleryImageDefinitionName }}
+
+  - name: PublisherName
+    value: ${{ parameters.PublisherName }}
+
+  - name: OfferName
+    value: ${{ parameters.OfferName }}
+
+  - name: PlanName
+    value: ${{ parameters.PlanName }}
+
+  - name: ILBName
+    value: ${{ parameters.ILBName }}
+
+  - name: LAWorksSpaceName
+    value: ${{ parameters.LAWorksSpaceName }}
+
+  - name: AdditionalDiskRequired
+    value: ${{ parameters.AdditionalDiskRequired }}
+
+  - name: KeyvaultName
+    value: ${{ parameters.KeyvaultName }}
+
+  - name: LAWorksSpaceRGName
+    value: ${{ parameters.LAWorksSpaceRGName }}
+
+  - name: LawSubID
+    value: ${{ parameters.LawSubID }}"
+
+  - name: DiskSku
+    value: ${{ parameters.DiskSku }}
+
+  - name: DiskSizeGB
+    value: ${{ parameters.DiskSizeGB }}
+
+  - name: DataDiskSku
+    value: ${{ parameters.DataDiskSku }}
+
+  - name: CountOfDataDisk
+    value: ${{ parameters.CountOfDataDisk }}
+
+  - name: StorageAccountName
+    value: ${{ parameters.SAName }}
+
+  - name: SARGName
+    value: ${{ parameters.SARGName }}
+
+  - name: CreatedBy
+    value: ${{ parameters.CreatedBy }}
+
+  - name: ManagedBy
+    value: ${{ parameters.ManagedBy }}
+
+  - name: RSVName
+    value: ${{ parameters.RSVName }}
+
+  - name: RSVRGName
+    value: ${{ parameters.RSVRGName }}
+
+  - name: BackupPolicyName
+    value: ${{ parameters.BackupPolicyName }}
+
+  - name: ServiceConnectionName
+    value: ${{ parameters.ServiceConnectionName }}
+ 
+trigger: none
+
+
+stages:
+  - stage: TerraformDeploymentOfVMWindowsWithILB
+    displayName: "Deploys VM windows with Internal Load Balancer"
+    pool:
+      vmImage: "windows-latest"
+    jobs:
+      - job: TerraformDeploymentOfVMWindowsWithILB
+        displayName: "Deploys VM windows with Internal Load Balancer"
+
+    
+
+        steps:
+          - checkout: self
+  
+          - task: AzurePowerShell@5
+            displayName: "PreConfiguration Script VM Windows"
+            name: PreConfigurationScriptVMWindows
+            continueOnError: false
+            inputs:
+             azurePowerShellVersion: LatestVersion
+             azureSubscription: '$(ServiceConnectionName)'
+             ScriptPath: '$(System.DefaultWorkingDirectory)/Scripts/PreProvisoningScript-VM-Windows.ps1'
+             ScriptArguments: '-VnetName "$(VnetName)" -VnetRGName "$(VnetRGName)" -SubnetName "$(SubnetName)" -SubscriptionID "$(SubscriptionID)" -GalsubID "$(GalsubID)" -GalleryImageDefinitionName "$(GalleryImageDefinitionName)" -GalleryResourceGroupName "$(GalleryResourceGroupName)" -GalleryName "$(GalleryName)"'
+
+ 
+            
+          - task: replacetokens@5
+            inputs:
+              rootDirectory: 'TerraformTemplates/VM-Terraform-Templates/'
+              targetFiles: '**/*.tf'
+              encoding: 'auto'
+              tokenPattern: 'custom'
+              tokenPrefix: '#(|'
+              tokenSuffix: '|)#'
+              writeBOM: true
+              actionOnMissing: 'warn'
+              keepToken: false
+              actionOnNoFiles: 'continue'
+              enableTransforms: false
+              useLegacyPattern: false
+              enableTelemetry: false
+              
+          - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+            # inputs:
+            #   terraformVersion: 'latest'
+          
+          
+          - task: TerraformTaskV2@2
+            inputs: 
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/TerraformTemplates/VM-Terraform-Templates/'
+              commandOptions: '-backend=true'
+              backendServiceArm: '$(ServiceConnectionName)'
+              backendAzureRmResourceGroupName: '$(Resource_Group_Name)'
+              backendAzureRmStorageAccountName: '$(Terraform_BackEnd_Storage_Account)'
+              backendAzureRmContainerName: '$(Terraform_BackEnd_Storage_Container)'
+              backendAzureRmKey: '$(Terraform_BackEnd_Storage_State_Key)'
+
+          # - task: TerraformTaskV2@2
+          #   inputs:
+          #     provider: 'azurerm'
+          #     workingDirectory: '$(System.DefaultWorkingDirectory)/TerraformTemplates/VM-Terraform-Templates/'
+          #     commandOptions: 'refresh'
+          #     environmentServiceNameAzureRM: '$(ServiceConnectionName)'
+
+          
+          - task: TerraformTaskV2@2
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/TerraformTemplates/VM-Terraform-Templates/'
+              commandOptions: '-refresh -lock=true -var Terraform_BackEnd_Storage_Account="$(Terraform_BackEnd_Storage_Account)" -var Resource_Group_Name="$(Resource_Group_Name)" -var Terraform_BackEnd_Storage_Container="$(Terraform_BackEnd_Storage_Container)" -var Terraform_BackEnd_Storage_State_Key="$(Terraform_BackEnd_Storage_State_Key)" -var VMRGName="$(VMRGName)" -var vmName="$(vmName)" -var location="$(location)" -var AdminUser="$(LocalUserName)" -var AdminPass="$(LocalPass)" -var ImageDefinitionID="$(ImageDefinitionID)" -var vnetRGName="$(vnetRGName)" -var vnetName="$(vnetName)" -var SubnetName="$(SubnetName)" -var ILBFrontEndIP="$(ILBFrontEndIP)" -var storageAccountName="$(storageAccountName)" -var vmSize="$(vmSize)" -var NSGName="$(NSGName)" -var CreatedBy="$(CreatedBy)" -var ManagedBy="$(ManagedBy)" -var SubscriptionId="$(SubscriptionId)" -var offer="$(OfferName)" -var sku="$(PlanName)" -var DiskSku="$(DiskSku)" -var ILBName="$(ILBName)" -var RSVName="$(RSVName)" -var RSVRGName="$(RSVRGName)" -var BackupPolicyName="$(BackupPolicyName)"'
+              environmentServiceNameAzureRM: '$(ServiceConnectionName)'
+              #-refresh-only
+          
+          - task: TerraformTaskV2@2
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/TerraformTemplates/VM-Terraform-Templates/'
+              commandOptions: '-refresh -lock=true -auto-approve -var Terraform_BackEnd_Storage_Account="$(Terraform_BackEnd_Storage_Account)" -var Resource_Group_Name="$(Resource_Group_Name)" -var Terraform_BackEnd_Storage_Container="$(Terraform_BackEnd_Storage_Container)" -var Terraform_BackEnd_Storage_State_Key="$(Terraform_BackEnd_Storage_State_Key)" -var VMRGName="$(VMRGName)" -var vmName="$(vmName)" -var location="$(location)" -var AdminUser="$(LocalUserName)" -var AdminPass="$(LocalPass)" -var ImageDefinitionID="$(ImageDefinitionID)" -var vnetRGName="$(vnetRGName)" -var vnetName="$(vnetName)" -var SubnetName="$(SubnetName)" -var ILBFrontEndIP="$(ILBFrontEndIP)" -var storageAccountName="$(storageAccountName)" -var vmSize="$(vmSize)" -var NSGName="$(NSGName)" -var CreatedBy="$(CreatedBy)" -var ManagedBy="$(ManagedBy)" -var SubscriptionId="$(SubscriptionId)" -var offer="$(OfferName)" -var sku="$(PlanName)" -var DiskSku="$(DiskSku)" -var ILBName="$(ILBName)" -var RSVName="$(RSVName)" -var RSVRGName="$(RSVRGName)" -var BackupPolicyName="$(BackupPolicyName)"'
+              environmentServiceNameAzureRM: '$(ServiceConnectionName)'
+             #-refresh-only
+       
+          - task: AzurePowerShell@5
+            displayName: "Post Provisioning Configuration of VM"
+            name: PostProvisioningConfigurationofVM
+            continueOnError: false
+            inputs:
+             azurePowerShellVersion: LatestVersion
+             azureSubscription: '$(ServiceConnectionName)'
+             ScriptPath: '$(System.DefaultWorkingDirectory)/Scripts/VM-PostProvisoning-Config.ps1'
+             ScriptArguments: "-ResourceGroupName ${{ parameters.VMRGName }} -VMName ${{ parameters.VmName }} -Location ${{ parameters.Location }} -SubscriptionId ${{ parameters.SubscriptionId }} -LAWorksSpaceName ${{ parameters.LAWorksSpaceName }} -SAName ${{ parameters.SAName }} -LAWorksSpaceRGName ${{ parameters.LAWorksSpaceRGName }} -LawSubID ${{ parameters.LawSubID }} -AdditionalDiskRequired ${{ parameters.AdditionalDiskRequired }} -SARGName ${{ parameters.SARGName }} -DataDiskSku ${{ parameters.DataDiskSku }} -DiskSizeGB ${{ parameters.DiskSizeGB }} -CountOfDataDisk ${{ parameters.CountOfDataDisk }} -VnetName ${{ parameters.VnetName }} -VnetRGName ${{ parameters.VnetRGName }} -NSGName ${{ parameters.NSGName }} -NSGRGName ${{ parameters.NSGRGName }} -CreatedBy ${{ parameters.CreatedBy }} -ManagedBy ${{ parameters.ManagedBy }} -KeyvaultName ${{ parameters.KeyvaultName }}"
