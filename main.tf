@@ -2,8 +2,8 @@
 terraform {
   backend "azurerm" {
     resource_group_name = "TestRG"
-    storage_account_name = "Teststg"
-    container_name       = "Testcnt"
+    storage_account_name = "teststgxyxx"
+    container_name       = "testcnt"
     key                  = "terra.tfstate"
     #access_key            = var.access_key
     #access_key = "q3kRLfKlcbOF6Y+bMCzkEHR1BNK2cbDrFdLsb73H06ceUqdcutdBG1l4Tkh6z39e61ess3+a+7wK+AStAUJilw=="
@@ -32,5 +32,5 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "rgname" {
   name     = "NewTestRG"
-  location = "West Europe"
+  location = "East US"
 }
