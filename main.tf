@@ -4,7 +4,7 @@ terraform {
     resource_group_name = "TestRG"
     storage_account_name = "teststgxyxx"
     container_name       = "testcnt"
-    key                  = "terra.tfstate"
+    key                  = "terrav2.tfstate"
     #use_oidc = true
     #access_key            = var.access_key
     #access_key = "q3kRLfKlcbOF6Y+bMCzkEHR1BNK2cbDrFdLsb73H06ceUqdcutdBG1l4Tkh6z39e61ess3+a+7wK+AStAUJilw=="
