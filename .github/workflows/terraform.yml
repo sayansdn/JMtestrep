@@ -23,9 +23,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    #permissions:
-      #id-token: write
-      #contents: read
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
     # Checkout the repository to the GitHub Actions runner
