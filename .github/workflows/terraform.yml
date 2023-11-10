@@ -51,6 +51,10 @@ jobs:
       run: terraform init
       working-directory: ${{env.ROOT_PATH}}
 
+    - name: Terraform refresh
+      run: terraform refresh
+      working-directory: ${{env.ROOT_PATH}}
+
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform plan -no-color
