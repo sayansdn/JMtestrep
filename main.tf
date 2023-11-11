@@ -23,10 +23,10 @@ provider "azurerm" {
   features {}
   use_msi = true
   #environment     = "production"
-  subscription_id = "79170484-10cc-48f5-99a2-f4bfe2ad50e1"
-  client_id       = "dc156045-af12-4b19-ac45-9535124c50ac"
-  # client_secret   = var.spnPass
-  tenant_id       = "baaae90c-2f56-4229-bdc1-7a0a8192b487"
+  #subscription_id = "79170484-10cc-48f5-99a2-f4bfe2ad50e1"
+  #client_id       = "dc156045-af12-4b19-ac45-9535124c50ac"
+  #client_secret   = var.spnPass
+  #tenant_id       = "baaae90c-2f56-4229-bdc1-7a0a8192b487"
   #msi_endpoint = false
   
 }
