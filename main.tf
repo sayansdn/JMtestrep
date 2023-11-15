@@ -122,7 +122,7 @@ resource "azurerm_lb_probe" "app_lb_probe" {
   protocol            = "Tcp"
   port                = 443
   loadbalancer_id     = azurerm_lb.app_lb.id
-  resource_group_name = var.RGname
+  #resource_group_name = var.RGname
 }
 
 #Create LB Rule
@@ -132,10 +132,10 @@ resource "azurerm_lb_rule" "app_lb_rule_app1" {
   frontend_port                  = 443
   backend_port                   = 443
   frontend_ip_configuration_name = azurerm_lb.app_lb.frontend_ip_configuration[0].name
-  backend_address_pool_id        = azurerm_lb_backend_address_pool.app_lb_backend_address_pool.id
+#  backend_address_pool_id        = azurerm_lb_backend_address_pool.app_lb_backend_address_pool.id
   probe_id                       = azurerm_lb_probe.app_lb_probe.id
   loadbalancer_id                = azurerm_lb.app_lb.id
-  resource_group_name = var.RGname
+ # resource_group_name = var.RGname
 }
 
 # Connect the Loadbalancer to the network interface
