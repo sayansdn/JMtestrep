@@ -192,6 +192,25 @@ resource "azurerm_virtual_machine" "azureVM" {
   }
 }
 
+#Create Data disk
+
+resource "azurerm_managed_disk" "example" {
+  name                 = "${var.vmName}-disk1"
+  location             = var.location
+  resource_group_name  = azurerm_resource_group.rgname.name
+  storage_account_type = "Standard_LRS"
+  create_option        = "Empty"
+  disk_size_gb         = 10
+}
+
+#Attach Data disk
+
+resource "azurerm_virtual_machine_data_disk_attachment" "example2" {
+  managed_disk_id    = azurerm_managed_disk.example.id
+  virtual_machine_id = azurerm_virtual_machine.azureVM.id
+  lun                = "10"
+  caching            = "ReadWrite"
+}
 
 /*
 resource "azurerm_backup_protected_vm" "vm1" {
