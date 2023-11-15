@@ -1,4 +1,4 @@
-location = "East US"
+location = "West US 2"
 RGname = "JMTestRG"
 vnetName = "TestVnet"
 vnetRGName = "TestRG"
