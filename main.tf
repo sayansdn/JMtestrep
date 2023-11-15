@@ -35,6 +35,6 @@ provider "azurerm" {
 #Create a resource group
 
 resource "azurerm_resource_group" "rgname" {
-  name     = "NewTestRG"
-  location = "East US"
+  name     = var.RGname
+  location = var.location
 }
