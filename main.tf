@@ -157,7 +157,7 @@ resource "azurerm_virtual_machine" "azureVM" {
 
   name                             = var.vmName
   location                         = var.location
-  resource_group_name            = azurerm_resource_group.rgname.name
+  resource_group_name              = azurerm_resource_group.rgname.name
   network_interface_ids            = ["${azurerm_network_interface.app_vm_nic.id}"]
   vm_size                          = var.vmSize
   delete_os_disk_on_termination    = true
