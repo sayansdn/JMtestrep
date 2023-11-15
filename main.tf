@@ -90,7 +90,7 @@ resource "azurerm_network_interface" "app_vm_nic" {
  tags = {}
 }
 
-/*
+
 #Create LB
 
 resource "azurerm_lb" "app_lb" {
@@ -144,7 +144,7 @@ resource "azurerm_network_interface_backend_address_pool_association" "ilb_nic_c
   ip_configuration_name   = "${var.vmName}-ipconfig01"
   backend_address_pool_id = azurerm_lb_backend_address_pool.app_lb_backend_address_pool.id
 }
-*/
+
 # Connect the security group to the network interface
 resource "azurerm_network_interface_security_group_association" "nsg_nic_connect" {
   network_interface_id      = azurerm_network_interface.app_vm_nic.id
